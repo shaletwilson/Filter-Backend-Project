@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Import Data</title>
+</head>
+<body>
+    <h1>Import Data from Excel</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="excel_file">
+        <input type="submit" value="Import">
+    </form>
+</body>
+</html>
