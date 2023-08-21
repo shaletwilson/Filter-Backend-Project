@@ -1,7 +1,7 @@
 # filter/urls.py
 from django.urls import path
 from . import views
-from .views import Login, FlightListCreateView, FlightDetailView, Filter_API_View
+from .views import Login, FlightListCreateView, FlightDetailView, Filter_API_View, TestView
 
 
 app_name = 'filter'
@@ -12,4 +12,5 @@ urlpatterns = [
     path('import/', views.import_data, name='import_data'),
     path('flight-detail/<int:id>/', FlightDetailView.as_view(), name='flight-detail'),
     path('filter-api/', Filter_API_View.as_view(), name='filter-api'),
+    path('test-api/', TestView.as_view(), name='test-api'),
 ]
