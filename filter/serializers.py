@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import flight_info
+from .models import flight_info, Airport_Info
 import math
 
 class FlightSerializer(serializers.ModelSerializer):
@@ -41,3 +41,20 @@ class FlightDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = flight_info
         fields = '__all__'
+
+
+class AirportSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        for field, value in data.items():
+            if isinstance(value, float) and math.isnan(value):
+                data[field] = "No Data"
+            elif isinstance(value, str) and value.lower() == "nan":
+                data[field] = "No Data"
+
+        return data
+    class Meta:
+        model = Airport_Info
+        fields = ('id','name', 'latitude_deg', 'longitude_deg', 'country_name', 'gps_code', 'iata_code')
