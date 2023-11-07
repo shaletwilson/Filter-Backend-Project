@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://localhost:8080',
+    'http://192.168.178.67:8080',
+    
 ]
 
 REST_FRAMEWORK = {

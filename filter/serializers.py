@@ -57,4 +57,21 @@ class AirportSerializer(serializers.ModelSerializer):
         return data
     class Meta:
         model = Airport_Info
-        fields = ('id','name', 'latitude_deg', 'longitude_deg', 'country_name', 'gps_code', 'iata_code')
+        fields = ('id','name', 'latitude_deg', 'longitude_deg', 'country_name', 'gps_code', 'iata_code', 'wikipedia_link')
+
+
+
+class AirportInfoSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        for field, value in data.items():
+            if isinstance(value, float) and math.isnan(value):
+                data[field] = "No Data"
+            elif isinstance(value, str) and value.lower() == "nan":
+                data[field] = "No Data"
+
+        return data
+    class Meta:
+        model = Airport_Info
+        fields = '__all__'

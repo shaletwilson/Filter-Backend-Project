@@ -36,53 +36,77 @@ class flight_info(models.Model):
 
 
 
-class Airport_Info(models.Model):
-    name = models.CharField(max_length=255)
-    type = models.CharField(max_length=255)
-    trafficType = models.CharField(max_length=255)
-    magneticDeclination = models.FloatField()
-    country = models.CharField(max_length=255)
-    geometry = models.CharField(max_length=255)
-    coordinates = models.CharField(max_length=255)
-    elevation = models.FloatField()
-    value = models.FloatField()
-    unit = models.CharField(max_length=255)
-    referenceDatum = models.CharField(max_length=255)
-    ppr = models.BooleanField()
-    private = models.BooleanField()
-    skydiveActivity = models.BooleanField()
-    winchOnly = models.BooleanField()
-    runways = models.IntegerField()
-    designator = models.CharField(max_length=255)
-    trueHeading = models.FloatField()
-    alignedTrueNorth = models.FloatField()
-    operations = models.CharField(max_length=255)
-    mainRunway = models.CharField(max_length=255)
-    turnDirection = models.CharField(max_length=255)
-    takeOffOnly = models.BooleanField()
-    landingOnly = models.BooleanField()
-    surface = models.CharField(max_length=255)
-    composition = models.CharField(max_length=255)
-    mainComposite = models.CharField(max_length=255)
-    condition = models.CharField(max_length=255)
-    mtow = models.FloatField()
-    dimension = models.CharField(max_length=255)
-    length = models.FloatField()
-    width = models.FloatField()
-    declaredDistance = models.FloatField()
-    tora = models.FloatField()
-    lda = models.FloatField()
-    pilotCtrlLighting = models.CharField(max_length=255)
-    createdAt = models.DateTimeField()
-    updatedAt = models.DateTimeField()
-    createdBy = models.CharField(max_length=255)
-    updatedBy = models.CharField(max_length=255)
-    elevationGeoid = models.FloatField()
-    geoidHeight = models.FloatField()
-    hae = models.FloatField()
+# class Airport_Info_AIP(models.Model):
+#     name = models.CharField(max_length=255, null=True, blank=True)
+#     type = models.CharField(max_length=255, null=True, blank=True)
+#     traffic_type = models.CharField(max_length=255, null=True, blank=True)
+#     magnetic_declination = models.FloatField()
+#     country = models.CharField(max_length=255, null=True, blank=True)
+#     geometry = models.CharField(max_length=255, null=True, blank=True)
+#     type = models.CharField(max_length=255, null=True, blank=True)
+#     coordinates = models.CharField(max_length=255, null=True, blank=True)
+#     elevation = models.FloatField()
+#     value = models.FloatField()
+#     unit = models.CharField(max_length=255, null=True, blank=True)
+#     referenceDatum = models.CharField(max_length=255, null=True, blank=True)
+#     ppr = models.BooleanField()
+#     private = models.BooleanField()
+#     skydiveActivity = models.BooleanField()
+#     winchOnly = models.BooleanField()    
+#     createdAt = models.DateTimeField(null=True, blank=True)
+#     updatedAt = models.DateTimeField(null=True, blank=True)
+#     createdBy = models.CharField(max_length=255, null=True, blank=True)
+#     updatedBy = models.CharField(max_length=255, null=True, blank=True)
+#     elevationGeoid = models.FloatField()
+#         geoidHeight = models.FloatField()
+#         hae = models.FloatField()
+#     icaocode = models.CharField(max_length=255, null=True, blank=True)
+#     frequencies = models.CharField(max_length=255, null=True, blank=True)
+#         value = models.CharField(max_length=255, null=True, blank=True)
+#         unit = models.CharField(max_length=255, null=True, blank=True)
+#         type = models.CharField(max_length=255, null=True, blank=True)
+#         name = models.CharField(max_length=255, null=True, blank=True)
+#         primary = models.CharField(max_length=255, null=True, blank=True)
+#         publicuse = models.CharField(max_length=255, null=True, blank=True)
+#         frequency_id = models.CharField(max_length=255, null=True, blank=True)
+    
+#     images = models.CharField(max_length=255, null=True, blank=True)
+#             filename = models.CharField(max_length=255, null=True, blank=True)
+#             id = models.CharField(max_length=255, null=True, blank=True)
+#             description = models.CharField(max_length=255, null=True, blank=True)
+    
+#     Contact = models.CharField(max_length=255, null=True, blank=True)
+#     services - fueltypes, glidertowing, 
+#     services - handlingfacilities, passengerFacilities
+#     frequencies - remarks
+#     hoursOfOperation - operatingHours(dayOfWeek,startTime, endTime, byNotam, sunrise, sunset, publicHolidaysExcluded )
 
-    def __str__(self):
-        return self.name
+#     source = models.CharField(max_length=255, null=True, blank=True)
+#     ident = models.CharField(max_length=100, blank=True, null=True)
+#     type = models.CharField(max_length=255, blank=True, null=True)
+#     name = models.CharField(max_length=255, blank=True, null=True)
+#     latitude_deg = models.CharField(max_length=255, blank=True, null=True)
+#     longitude_deg = models.CharField(max_length=255, blank=True, null=True)
+#     elevation_ft = models.CharField(max_length=255, blank=True, null=True)
+#     continent = models.CharField(max_length=255, blank=True, null=True)
+#     country_name = models.CharField(max_length=255, blank=True, null=True)
+#     iso_country = models.CharField(max_length=255, blank=True, null=True)
+#     region_name = models.CharField(max_length=255, blank=True, null=True)
+#     iso_region = models.CharField(max_length=255, blank=True, null=True)
+#     local_region = models.CharField(max_length=255, blank=True, null=True)
+#     municipality = models.CharField(max_length=255, blank=True, null=True)
+#     scheduled_service = models.CharField(max_length=255, blank=True, null=True)
+#     gps_code = models.CharField(max_length=255, blank=True, null=True)
+#     iata_code = models.CharField(max_length=255, blank=True, null=True)
+#     home_link = models.URLField(max_length=255, blank=True, null=True)
+#     wikipedia_link = models.URLField(max_length=255, blank=True, null=True)
+#     keywords = models.TextField(blank=True, null=True)
+#     score = models.CharField(max_length=255, blank=True, null=True)
+#     last_updated = models.CharField(max_length=255, blank=True, null=True)
+#     Max_takeoff_weight = models.FloatField(null=True, blank=True)
+
+#     def __str__(self):
+#         return self.name
 
 
 
@@ -108,6 +132,44 @@ class Airport_Info(models.Model):
     keywords = models.TextField(blank=True, null=True)
     score = models.CharField(max_length=255, blank=True, null=True)
     last_updated = models.CharField(max_length=255, blank=True, null=True)
+    Max_takeoff_weight = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+
+# class Runway_Info(models.Model):
+#     airport = models.ForeignKey(Airport_Info_AIP, on_delete=models.CASCADE)
+#     runways = models.IntegerField()
+#     designator = models.CharField(max_length=255, blank=True, null=True)
+#     trueHeading = models.FloatField()
+#     alignedTrueNorth = models.FloatField()
+#     operations = models.CharField(max_length=255, blank=True, null=True)
+#     mainRunway = models.CharField(max_length=255, blank=True, null=True)
+#     turnDirection = models.CharField(max_length=255, blank=True, null=True)
+#     takeOffOnly = models.BooleanField()
+#     landingOnly = models.BooleanField()
+#     surface = models.CharField(max_length=255, blank=True, null=True)
+#         composition = models.CharField(max_length=255, blank=True, null=True)
+#         mainComposite = models.CharField(max_length=255, blank=True, null=True)
+#         condition = models.CharField(max_length=255, blank=True, null=True)
+#     mtow = models.FloatField() - VALUE, unit
+#     dimension = models.CharField(max_length=255, blank=True, null=True)
+#         length = models.FloatField() value, unit
+#         width = models.FloatField() value, unit
+#     declaredDistance = models.FloatField()
+#         tora = models.FloatField() value, unit
+#         toda - value, unit
+#         lda = models.FloatField() value, unit
+#         asda - value, unit
+#     pilotCtrlLighting = models.CharField(max_length=255, blank=True, null=True)
+#     lightingSystem
+#     runway_id
+#     visualApproachAids
+#     surface - pcn
+#     thresholdLocation -  geometry -type, coordinates
+#                         -elevation - value, unit, referencedatum
+#     remarks
+#     instrumentApproachAids -  remarks, channel, identifier, frequency(value, unit), alignedTrueNorth, type,hoursOfOperation(operatingHours(dayOfWeek, startTime, endTime, byNotam, sunrise, sunset, publicHolidaysExcluded)) 
+#     exclusiveAircraftType
+
