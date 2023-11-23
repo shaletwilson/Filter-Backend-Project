@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import flight_info, Airport_Info
+from .models import flight_info, Airport_Info, Airport_info_aip, Frequency, Runway, Image
 import math
 
 class FlightSerializer(serializers.ModelSerializer):
@@ -53,19 +53,33 @@ class AirportSerializer(serializers.ModelSerializer):
                 data[field] = "No Data"
             elif isinstance(value, str) and value.lower() == "nan":
                 data[field] = "No Data"
-
         return data
     class Meta:
-        model = Airport_Info
-        fields = ('id','name', 'latitude_deg', 'longitude_deg', 'country_name', 'gps_code', 'iata_code', 'wikipedia_link')
+        model = Airport_info_aip
+        fields = ('id','name','country', 'geometry_coordinates', 'magneticDeclination', 'magneticDeclination', 'icaoCode')
 
+class FrequencySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Frequency
+        fields = '__all__'
 
+class RunwaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Runway
+        fields = '__all__'
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = '__all__'
 
 class AirportInfoSerializer(serializers.ModelSerializer):
+    frequency_set = FrequencySerializer(many=True, read_only=True)
+    runway_set = RunwaySerializer(many=True, read_only=True)
+    
     def to_representation(self, instance):
         data = super().to_representation(instance)
-
-        for field, value in data.items():
+        for field, value in data.items(): 
             if isinstance(value, float) and math.isnan(value):
                 data[field] = "No Data"
             elif isinstance(value, str) and value.lower() == "nan":
@@ -73,5 +87,5 @@ class AirportInfoSerializer(serializers.ModelSerializer):
 
         return data
     class Meta:
-        model = Airport_Info
+        model = Airport_info_aip
         fields = '__all__'

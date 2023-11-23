@@ -2,7 +2,7 @@ from django.shortcuts import render
 import pandas as pd
 from pymongo import MongoClient
 from django.shortcuts import render
-from .models import flight_info, Airport_Info
+from .models import Airport_info_aip,  Frequency, Runway, Image, flight_info, Airport_Info
 from rest_framework import generics
 from rest_framework.views import APIView
 from .serializers import FlightSerializer, FlightDetailSerializer, AirportSerializer, AirportInfoSerializer
@@ -25,22 +25,8 @@ def import_data(request):
     csv_file = "C:/Users/Shalet Wilson/Desktop/SearchApplication/filter_application/filter/Flugzeuginfo.xlsx"
     df = pd.read_excel(csv_file)
 
-    # df.drop(columns=['id'], inplace=True)
-
-    # Convert the DataFrame to a list of dictionaries
     data = df.to_dict(orient='records')
 
-    # if 'id' in df.columns:
-    #         # Drop the 'id' column from the DataFrame
-    #         df.drop(columns=['id'], inplace=True)
-    
-    # Connect to MongoDB
-    # client = MongoClient('localhost', 27017)
-    # db = client['Flight_DataBase']
-    # collection = db['filter_flight_info']
-    
-
-    # collection.insert_many(data)
 
     for item in data:
             flight_info.objects.create(
@@ -100,9 +86,9 @@ class FlightDetailView(RetrieveAPIView):
 
 
 class CustomPagination(PageNumberPagination):
-    page_size = 100
+    page_size = 1500
     page_size_query_param = 'page_size'
-    max_page_size = 100
+    max_page_size = 1500
 
 
 class Filter_API_View(ListAPIView):
@@ -245,7 +231,7 @@ class TestView(ListAPIView):
             print("INITIAL DATA", filters)
             if not filters:
                 filtered_data = flight_info.objects.all().order_by('id')
-
+            
             for filter_item in filters:
                 column = filter_item.get('column')
                 condition = filter_item.get('condition')
@@ -320,8 +306,7 @@ class TestView(ListAPIView):
                         message = "Select Proper Criteria For Filtering"
                         break
                 else:
-                    filtered_data = None
-                    message = "Select Proper Criteria For Filtering"
+                    filtered_data = flight_info.objects.all().order_by('id')
                     break
             
             if filtered_data:
@@ -363,55 +348,98 @@ class TestView(ListAPIView):
         return Response(response_data)
 
 
-def import_airport_data(request):
-    excel_file = "C:/Users/Shalet Wilson/Desktop/SearchApplication/filter_application/filter/de-airports.xlsx"
-    df = pd.read_excel(excel_file)
+def import_airport_data_aip(request):
+    json_file = "C:/Users/Shalet Wilson/Desktop/Airport_data.Airport_info_DE_AIP.json"
 
-    # df.drop(columns=['id'], inplace=True)
+    with open(json_file, 'r') as file:
+            json_data = json.load(file)
 
-    # Convert the DataFrame to a list of dictionaries
-    data = df.to_dict(orient='records')
-
-    # if 'id' in df.columns:
-    #         # Drop the 'id' column from the DataFrame
-    #         df.drop(columns=['id'], inplace=True)
-    
-    # Connect to MongoDB
-    # client = MongoClient('localhost', 27017)
-    # db = client['Flight_DataBase']
-    # collection = db['filter_flight_info']
-    
-
-    # collection.insert_many(data)
-
-    for item in data:
-            Airport_Info.objects.create(
-                ident=item['ident'], 
-                type=item['type'], 
-                name=item['name'],
-                latitude_deg=item['latitude_deg'],
-                longitude_deg=item['longitude_deg'],
-                elevation_ft=item['elevation_ft'],
-                continent=item['continent'],
-                country_name=item['country_name'],
-                iso_country=item['iso_country'],
-                iso_region=item['iso_region'],
-
-                region_name=item['region_name'],
-                local_region=item['local_region'],
-                municipality=item['municipality'],
-                scheduled_service=item['scheduled_service'],
-                gps_code=item['gps_code'],
-                iata_code=item['iata_code'],
-                home_link=item['home_link'],
-                wikipedia_link=item['wikipedia_link'],
-                keywords=item['keywords'],
-                score=item['score'],
-
-                last_updated=item['last_updated'],
-                
+    for item in json_data:
+            
+            airport_new=Airport_info_aip(
+                name=item['name'] if 'name' in item else "",
+                icaoCode=item['icaoCode'] if 'icaoCode' in item else "",
+                airport_type=item['type'] if 'type' in item else "", 
+                trafficType=list([(item['trafficType'])]) if 'trafficType' in item else list([("")]),
+                magneticDeclination=item['magneticDeclination'] if 'magneticDeclination' in item else "",
+                country=item['country'] if 'country' in item else "",
+                geometry_type=item['geometry']['type'] if 'geometry' in item and 'type' in item['geometry'] else "",
+                geometry_coordinates=list([(item['geometry']['coordinates'])]) if 'geometry' in item and 'coordinates' in item['geometry'] else list([("")]),
+                elevation_value=item['elevation']['value'] if 'elevation' in item and 'value' in item['elevation'] else "",
+                elevation_unit=item['elevation']['unit'] if 'elevation' in item and 'unit' in item['elevation'] else "",
+                elevation_referenceDatum=item['elevation']['referenceDatum'] if 'elevation' in item and 'referenceDatum' in item['elevation'] else "",
+                ppr=item['ppr'] if 'ppr' in item else "",
+                private=item['private'] if 'private' in item else "",
+                skydiveActivity=item['skydiveActivity'] if 'skydiveActivity' in item else "",
+                winchOnly=item['winchOnly'] if 'winchOnly' in item else "",
+                elevation_geoid_height=item['elevationGeoid']['geoidHeight'] if 'elevationGeoid' in item and 'geoidHeight' in item['elevationGeoid'] else "",
+                elevation_hae=item['elevationGeoid']['hae'] if 'elevationGeoid' in item and 'hae' in item['elevationGeoid'] else "",
+                contact=item['contact'] if 'contact' in item else "",
+                services_fuelTypes=list([(item['services']['fuelTypes'])]) if 'services' in item and 'fuelTypes' in item['services'] else list([("")]),
+                services_gliderTowing=list([(item['services']['gliderTowing'])]) if 'services' in item and 'gliderTowing' in item['services'] else list([("")]),
+                created_at=item['createdAt'] if 'createdAt' in item else "",
+                created_by=item['createdBy'] if 'createdBy' in item else "",
+                updated_at=item['updatedAt'] if 'updatedAt' in item else "",
+                updated_by=item['updatedBy'] if 'updatedBy' in item else "",
             )
+            airport_new.save()
 
+            if 'frequencies' in item:
+                for frequency in item['frequencies']:
+                    frequency_new=Frequency(
+                        airport=airport_new,
+                        value=frequency['value'] if 'frequencies' in item and 'value' in frequency else "",
+                        unit=frequency['unit'] if 'frequencies' in item and 'unit' in frequency else "",
+                        frequency_type=frequency['type'] if 'frequencies' in item and 'type' in frequency else "",
+                        name=frequency['name'] if 'frequencies' in item and 'name' in frequency else "",
+                        primary=frequency['primary'] if 'frequencies' in item and 'primary' in frequency else "",
+                        publicUse=frequency['publicUse'] if 'frequencies' in item and 'publicUse' in frequency else "",
+                    )
+                    
+                    frequency_new.save()
+            
+            if 'runways' in item:
+                for runway in item['runways']:
+                    runway_new=Runway(
+                        airport = airport_new,
+                        designator = runway['designator'] if 'runways' in item and 'designator' in runway else "",
+                        trueHeading = runway['trueHeading'] if 'runways' in item and 'trueHeading' in runway else "",
+                        alignedTrueNorth = runway['alignedTrueNorth'] if 'runways' in item and 'alignedTrueNorth' in runway else "",
+                        operations = runway['operations'] if 'runways' in item and 'operations' in runway else "",
+                        mainRunway = runway['mainRunway'] if 'runways' in item and 'mainRunway' in runway else "",
+                        turnDirection = runway['turnDirection'] if 'runways' in item and 'turnDirection' in runway else "",
+                        takeOffOnly = runway['takeOffOnly'] if 'runways' in item and 'takeOffOnly' in runway else "",
+                        landingOnly = runway['landingOnly'] if 'runways' in item and 'landingOnly' in runway else "",
+                        surface_composition = list([(runway['surface']['composition'])]) if 'runways' in item and 'surface' in runway and 'composition' in runway['surface'] else list([("")]),
+                        surface_mainComposite = runway['surface']['mainComposite'] if 'runways' in item and 'surface' in runway and 'mainComposite' in runway['surface'] else "",
+                        surface_condition = runway['surface']['condition'] if 'runways' in item and 'surface' in runway and 'condition' in runway['surface'] else "",
+                        surface_mtow_value = runway['surface']['mtow']['value'] if 'runways' in item and 'surface' in runway and 'mtow' in runway['surface'] and 'value' in runway['surface']['mtow'] else "",
+                        surface_mtow_unit = runway['surface']['mtow']['unit'] if 'runways' in item and 'surface' in runway and 'mtow' in runway['surface'] and 'unit' in runway['surface']['mtow'] else "",
+                        # dimension_length_value = runway['length']['value'] if 'runways' in item and 'length' in runway and 'value' in runway['length'] else "",
+                        dimension_length_value = (runway['dimension']['length']['value'] if 'dimension' in runway and 'length' in runway['dimension'] and 'value' in runway['dimension']['length'] else ""),
+
+                        #dimension_length_unit = runway['length']['unit'] if 'runways' in item and 'length' in runway and 'unit' in runway['length'] else "",
+                        dimension_length_unit = (runway['dimension']['length']['unit'] if 'dimension' in runway and 'length' in runway['dimension'] and 'unit' in runway['dimension']['length'] else ""),
+                        # dimension_width_value = runway['width']['value'] if 'runways' in item and 'width' in runway and 'value' in runway['width'] else "",
+                        # dimension_width_unit = runway['width']['unit'] if 'runways' in item and 'width' in runway and 'unit' in runway['width']  else "",
+                        dimension_width_value = (runway['dimension']['width']['value'] if 'dimension' in runway and 'width' in runway['dimension'] and 'value' in runway['dimension']['width'] else ""),
+                        dimension_width_unit = (runway['dimension']['width']['unit'] if 'dimension' in runway and 'width' in runway['dimension'] and 'unit' in runway['dimension']['width'] else ""),
+                        declaredDistance_tora_value = runway['declaredDistance']['tora']['value'] if 'runways' in item and 'declaredDistance' in runway and 'tora' in runway['declaredDistance'] and 'value' in runway['declaredDistance']['tora'] else "",
+                        declaredDistance_tora_unit = runway['declaredDistance']['tora']['unit'] if 'runways' in item and 'declaredDistance' in runway and 'tora' in runway['declaredDistance'] and 'unit' in runway['declaredDistance']['tora'] else "",
+                        declaredDistance_lda_value = runway['declaredDistance']['lda']['value'] if 'runways' in item and 'declaredDistance' in runway and 'lda' in runway['declaredDistance'] and 'value' in runway['declaredDistance']['lda'] else "",
+                        declaredDistance_lda_unit = runway['declaredDistance']['lda']['unit'] if 'runways' in item and 'declaredDistance' in runway and 'lda' in runway['declaredDistance'] and 'unit' in runway['declaredDistance']['lda'] else "",
+                        pilotCtrlLighting = runway['pilotCtrlLighting'] if 'runways' in item and 'pilotCtrlLighting' in runway else "",
+                        visualApproachAids = list([(runway['visualApproachAids'])]) if 'runways' in item and 'visualApproachAids' in runway else list([("")]),
+                    )
+                    runway_new.save()
+            
+            if 'images' in item:
+                for image in item["images"]:
+                    image_new=Image(
+                        airport = airport_new,
+                        filename=image['filename'] if 'images' in item and 'filename' in image else ""
+                    )
+                    image_new.save()
     return render(request, 'import_success.html')
 
 
@@ -419,24 +447,8 @@ def import_airport_data(request):
 # def import_airport_data_all(request):
 #     excel_file = "C:/Users/Shalet Wilson/Desktop/SearchApplication/filter_application/filter/de-airports.xlsx"
 #     df = pd.read_excel(excel_file)
-
-#     # df.drop(columns=['id'], inplace=True)
-
-#     # Convert the DataFrame to a list of dictionaries
-#     data = df.to_dict(orient='records')
-
-#     # if 'id' in df.columns:
-#     #         # Drop the 'id' column from the DataFrame
-#     #         df.drop(columns=['id'], inplace=True)
-    
-#     # Connect to MongoDB
-#     # client = MongoClient('localhost', 27017)
-#     # db = client['Flight_DataBase']
-#     # collection = db['filter_flight_info']
-    
-
-#     # collection.insert_many(data)
-
+        
+    #   data = df.to_dict(orient='records')
 #     for item in data:
 #             if not item[source] ='AIP':
            
@@ -505,16 +517,30 @@ def import_airport_data(request):
 
 
 class AirportListView(generics.ListCreateAPIView):
-    queryset = Airport_Info.objects.all()
+    queryset = Airport_info_aip.objects.all()
     serializer_class = AirportSerializer
     # pagination_class = LargeResultsSetPagination
 
 
 class AirportDetailView(RetrieveAPIView):
-    queryset = Airport_Info.objects.all()
-    print("data", queryset)
+    queryset = Airport_info_aip.objects.all()
     serializer_class = AirportInfoSerializer
     lookup_field = 'id'
+
+    # def get(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+
+    #     # Fetch related Frequency data for the airport
+    #     frequencies = Frequency.objects.filter(airport=instance)
+
+    #     # Pass the fetched Frequency data to the serializer
+    #     serializer = self.get_serializer(instance, frequencies=frequencies)
+
+    #     return Response(serializer.data)
+    # def get_object(self):
+    #     # Override the get_object method to prefetch_related runways, frequencies, and images
+    #     obj = super().get_object()
+    #     return Airport_info_aip.objects.prefetch_related('runways').get(pk=obj.pk)
 
 
 
@@ -522,114 +548,147 @@ class AirportDetailView(RetrieveAPIView):
 class Airport_Filter_API(ListAPIView):
     pagination_class = CustomPagination
     serializer_class = AirportSerializer
-    page_size = 100
+    page_size = 1000
     page = 1
     
-    def get(self, request):  
+    def get_queryset(self):    
         message = None
         filtered_data = None
         try:
-            filed_name = request.query_params.get('field_name')
+            filed_name = self.request.query_params.get('column')
+            print("data from call", filed_name)
             
-            value = request.query_params.get('value')
-            condition = request.query_params.get('condition')
+            value = self.request.query_params.get('value')
+            condition = self.request.query_params.get('condition')
         except:
-            filtered_data = Airport_Info.objects.all().order_by('id')
+            filtered_data = Airport_info_aip.objects.all().order_by('id')
        
 
-        filed_name = request.query_params.get('filed_name')
+        filed_name = self.request.query_params.get('column')
         
-        value = request.query_params.get('value')
-        condition = request.query_params.get('condition')
+        value = self.request.query_params.get('value')
+        condition = self.request.query_params.get('condition')
+        # filed_name = 'MTOW'
+        # value = '4'
+        # condition = '<='
 
         if filed_name and condition and value:
+            print("Trueeeee", condition)
             if condition == '=':
+                print("data ======")
                 if filed_name == 'name':
-                    filtered_data = Airport_Info.objects.filter(name__iexact=value).order_by('id')
-                elif filed_name == 'iata_code':
-                    filtered_data = Airport_Info.objects.filter(iata_code__iexact=value).order_by('id')
-                elif filed_name == 'Max_takeoff_weight':
-                    filtered_data = Airport_Info.objects.filter(Max_takeoff_weight=value).order_by('id')
+                    filtered_data = Airport_info_aip.objects.filter(name__iexact=value).order_by('id')
+                    
+                elif filed_name == 'icaoCode':
+                    filtered_data = Airport_info_aip.objects.filter(icaoCode__iexact=value).order_by('id')
+                elif filed_name == 'MTOW':
+                    filtered_data = Airport_info_aip.objects.filter(runway__surface_mtow_value=value).order_by('id')
+                    print("data from aip", filtered_data)
+
                 else:
                     filtered_data = None
-                    message = "NO Data"
+                    self.message = "NO Data"
                 
             elif condition == '<':
-                if filed_name == 'Max_takeoff_weight':
-                    filtered_data = Airport_Info.objects.filter(Max_takeoff_weight__lt=value).order_by('id')
+                if filed_name == 'MTOW':
+                    filtered_data = Airport_info_aip.objects.filter(runway__surface_mtow_value__lt=value).order_by('id')
                 
                 else:
                     filtered_data = None
-                    message = "Select Proper Criteria For Filtering"
+                    self.message = "Select Proper Criteria For Filtering"
             elif condition == '>':
-                if filed_name == 'Max_takeoff_weight':
-                    filtered_data = Airport_Info.objects.filter(Max_takeoff_weight__gt=value).order_by('id')
+                if filed_name == 'MTOW':
+                    filtered_data = Airport_info_aip.objects.filter(runway__surface_mtow_value__gt=value).order_by('id')
                 else:
                     filtered_data = None
-                    message = "Select Proper Criteria For Filtering"
+                    self.message = "Select Proper Criteria For Filtering"
             elif condition == '<=':
-                if filed_name == 'Max_takeoff_weight':
-                    filtered_data = Airport_Info.objects.filter(Max_takeoff_weight__lte=value).order_by('id')
+                if filed_name == 'MTOW':
+                    filtered_data = Airport_info_aip.objects.filter(runway__surface_mtow_value__lte=value).order_by('id')
                 else:
                     filtered_data = None
-                    message = "Select Proper Criteria For Filtering"
+                    self.message = "Select Proper Criteria For Filtering"
             elif condition == '>=':
-                if filed_name == 'Max_takeoff_weight':
-                    filtered_data = Airport_Info.objects.filter(Max_takeoff_weight__gte=value).order_by('id')
+                if filed_name == 'MTOW':
+                    filtered_data = Airport_info_aip.objects.filter(runway__surface_mtow_value__gte=value).order_by('id')
                 else:
                     filtered_data = None
-                    message = "Select Proper Criteria For Filtering"
+                    self.message = "Select Proper Criteria For Filtering"
             elif condition == 'contains':
                 
                 if filed_name == 'name':
-                    filtered_data = Airport_Info.objects.filter(name__icontains=value).order_by('id')
+                    filtered_data = Airport_info_aip.objects.filter(name__icontains=value).order_by('id')
                     print("data", filtered_data)
-                elif filed_name == 'iata_code':
-                    filtered_data = Airport_Info.objects.filter(iata_code__icontains=value).order_by('id')
+                elif filed_name == 'icaoCode':
+                    filtered_data = Airport_info_aip.objects.filter(icaoCode__icontains=value).order_by('id')
+                    print("contains", filtered_data)
                 
                 else:
                     filtered_data = None
-                    message = "Select Proper Criteria For Filtering"
+                    self.message = "Select Proper Criteria For Filtering"
             elif condition == 'startswith':
                 if filed_name == 'name':
-                    filtered_data = Airport_Info.objects.filter(name__istartswith=value).order_by('id')
-                elif filed_name == 'iata_code':
-                    filtered_data = Airport_Info.objects.filter(iata_code__istartswith=value).order_by('id')
+                    filtered_data = Airport_info_aip.objects.filter(name__istartswith=value).order_by('id')
+                elif filed_name == 'icaoCode':
+                    filtered_data = Airport_info_aip.objects.filter(icaoCode__istartswith=value).order_by('id')
                 
                 else:
                     filtered_data = None
-                    message = "Select Proper Criteria For Filtering"
+                    self.message = "Select Proper Criteria For Filtering"
             else:
                 filtered_data = None
-                message = "Select Proper Criteria For Filtering"
+                self.message = "Select Proper Criteria For Filtering"
 
         else:
-            filtered_data = Airport_Info.objects.all().order_by('id')
+            filtered_data = Airport_info_aip.objects.all().order_by('id')
 
-            # Serialize data
-        if filtered_data:
-            page = self.paginate_queryset(filtered_data)
-            print("data", page)
+        return filtered_data
+    
+    # Serialize data
+    def list(self, request, *args, **kwargs):
+        # message = self.message
+        # if not message:
+        #     message = "No Data"
+        queryset = self.get_queryset()
+
+        if queryset:
+            page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
-                print("yes")
-                print("serisl", serializer.data)
                 return self.get_paginated_response(serializer.data)
-            
-            serializer = self.get_serializer(filtered_data, many=True)
-            response_data = {
-                "response": serializer.data
-            }
-        elif not filtered_data:
-            response_data = {
-                "response": "NO Data",
-                "message": "Results Not Found"
-            }
+
+            serializer = self.get_serializer(queryset, many=True)
+            response_data = {"response": serializer.data}
         else:
-            response_data = {
-                "response": "NO Data",
-                "message": message
-            }
+            response_data = {"response": "NO Data", "message": getattr(self, 'message', "Results Not Found")}
+
         return Response(response_data)
+        # if filtered_data:
+                
+        #         page = self.paginate_queryset(filtered_data)
+                
+        #         if page is not None:
+                   
+        #             serializer = self.get_serializer(page, many=True)
+                    
+
+        #             return self.get_paginated_response(serializer.data)
+                
+        #         serializer = self.get_serializer(filtered_data, many=True)
+                
+        #         response_data = {
+        #             "response": serializer.data
+        #         }
+        # elif not filtered_data:
+        #     response_data = {
+        #         "response": "NO Data",
+        #         "message": "Results Not Found"
+        #     }
+        # else:
+        #     response_data = {
+        #         "response": "NO Data",
+        #         "message": message
+        #     }
+        # return Response(response_data)
 
 

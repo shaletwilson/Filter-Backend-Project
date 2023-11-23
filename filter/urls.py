@@ -10,7 +10,9 @@ urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('flight-list/', FlightListCreateView.as_view(), name='flight-list'),
     path('import/', views.import_data, name='import_data'),
-    path('import-airport-data/', views.import_airport_data, name='import-airport-data'),
+    # path('import-airport-data/', views.import_airport_data, name='import-airport-data'),
+    path('import-airport-data-aip/', views.import_airport_data_aip, name='import-airport-data-aip'),
+
     path('flight-detail/<int:id>/', FlightDetailView.as_view(), name='flight-detail'),
     path('single-filter-api/', Filter_API_View.as_view(), name='single-filter-api'),
     path('filter-api/', TestView.as_view(), name='filter-api'),
