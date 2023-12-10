@@ -9,7 +9,7 @@ app_name = 'filter'
 urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('flight-list/', FlightListCreateView.as_view(), name='flight-list'),
-    path('import/', views.import_data, name='import_data'),
+    path('import-aircrafts/', views.import_aircraft_data, name='import-aircrafts'),
     # path('import-airport-data/', views.import_airport_data, name='import-airport-data'),
     path('import-airport-data-aip/', views.import_airport_data_aip, name='import-airport-data-aip'),
 
@@ -22,5 +22,7 @@ urlpatterns = [
     path('airport-list-api/', AirportListView.as_view(), name='airport-list-api'),
     path('airport-detail-api/<int:id>/', AirportDetailView.as_view(), name='airport-detail-api'),
 
-    path('airport-filter-api/', Airport_Filter_API.as_view(), name='airport-filter-api')
+    path('airport-filter-api/', Airport_Filter_API.as_view(), name='airport-filter-api'),
+
+    path('import-airport-data-other/', views.import_airport_data_othersource, name='import-airport-data-other'),
 ]
