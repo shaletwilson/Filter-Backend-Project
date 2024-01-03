@@ -358,15 +358,15 @@ class TestView(ListAPIView):
         print("respones", response_data)
         return Response(response_data)
 
-
+@csrf_exempt
 def import_airport_data_aip(request):
     if request.method == 'POST':
         selected_source = request.POST.get('selectedSource', '')
-        
-        uploaded_file = request.FILES.get('file')
-        
+        print("source", selected_source)
+            
 
         if selected_source == "Other Source":
+            uploaded_file = request.FILES.get('file')
             df = pd.read_excel(uploaded_file)
 
             data = df.to_dict(orient='records')
@@ -400,11 +400,21 @@ def import_airport_data_aip(request):
                 )
         
         else:
+            print("AIP SOUCE ELSE")
 
             uploaded_file = request.FILES.get('file')
+            print("files", uploaded_file)
 
-            with open(uploaded_file, 'r') as file:
-                    json_data = json.load(file)
+            file_content = uploaded_file.read()
+
+            
+            file_content_str = file_content.decode('utf-8')
+
+            
+            json_data = json.loads(file_content_str)
+
+            # with open(uploaded_file, 'r') as file:
+            #         json_data = json.load(file)
 
             for item in json_data:
                     
