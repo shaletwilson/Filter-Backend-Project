@@ -27,6 +27,7 @@ def import_aircraft_data(request):
     if request.method == 'POST':
         
         uploaded_file = request.FILES.get('file')
+        print("uploaded file", uploaded_file)
         df = pd.read_excel(uploaded_file)
 
         data = df.to_dict(orient='records')
